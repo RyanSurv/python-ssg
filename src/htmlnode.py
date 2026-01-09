@@ -32,7 +32,7 @@ class LeafNode(HTMLNode):
         if self.value == None:
             raise ValueError("Leaf value must not be None")
         if self.tag == None:
-            return str(value)
+            return str(self.value)
 
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
