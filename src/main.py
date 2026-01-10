@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 
 from textnode import TextType, TextNode
 from generate_page import generate_pages_recursive
@@ -7,19 +8,22 @@ from generate_page import generate_pages_recursive
 
 def main():
     src = "static"
-    dest = "public"
+    dest = "docs"
+
+    basepath = "/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
 
     if not os.path.isdir(src):
         print("src directory does not exist")
         os._exit(1)
     if not os.path.isdir(dest):
-        print("dest directory does not exist")
-        os._exit(1)
+        os.mkdir(dest)
 
     empty_dir(dest)
     copy_dir(src, dest)
 
-    generate_pages_recursive("content", "template.html", "public")
+    generate_pages_recursive("content", "template.html", dest, basepath)
 
 def empty_dir(path_to_dir):
     contents = os.listdir(path_to_dir)
