@@ -2,6 +2,7 @@ import os
 import shutil
 
 from textnode import TextType, TextNode
+from generate_page import generate_page
 
 
 def main():
@@ -17,6 +18,8 @@ def main():
 
     empty_dir(dest)
     copy_dir(src, dest)
+
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 def empty_dir(path_to_dir):
     contents = os.listdir(path_to_dir)

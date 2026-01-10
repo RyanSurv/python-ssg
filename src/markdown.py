@@ -30,11 +30,11 @@ def block_to_block_type(block):
         if block.startswith("```\n") and block.endswith("```"):
             return BlockType.CODE
         # QUOTE
-        if block.startswith("> "):
+        if block.startswith(">"):
             every_line = True
             lines = block.split("\n")
             for line in lines:
-                if not line.startswith("> "):
+                if not line.startswith(">"):
                     every_line = False
             if every_line == True:
                 return BlockType.QUOTE
@@ -70,7 +70,7 @@ def markdown_to_html_node(markdown):
 
         match block_type:
             case BlockType.HEADING:
-                parts = block.split()
+                parts = block.split(" ", 1)
                 body.children.append(ParentNode(f"h{len(parts[0])}", text_to_children(parts[1])))
             case BlockType.CODE:
                 parts = block.split("```\n")
@@ -81,17 +81,24 @@ def markdown_to_html_node(markdown):
                     pre = ParentNode("pre", [LeafNode("code", block)])
                     body.children.append(pre)
             case BlockType.QUOTE:
-                body.children.append(ParentNode("blockquote", text_to_children(block)))
+                # parts = block.split("\n")
+                # blockquote = ParentNode("blockquote", [])
+                body.children.append(ParentNode("blockquote", text_to_children(block.strip().replace("> ", ""))))
+                # for part in parts:
+                #     blockquote.children.append(text_node_to_html_node(text_to_textnodes(part[2:])))
+                # body.children.append(blockquote)
             case BlockType.UNORDERED_LIST:
                 parts = block.split("\n")
                 ul = ParentNode("ul", [])
                 for part in parts:
-                    ul.children.append(ParentNode("li", text_to_children(block[2:])))
+                    ul.children.append(ParentNode("li", text_to_children(part[2:])))
+                body.children.append(ul)
             case BlockType.ORDERED_LIST:
                 parts = block.split("\n")
                 ol = ParentNode("ol", [])
                 for part in parts:
-                    ol.children.append(ParentNode("li", text_to_children(block[2:])))
+                    ol.children.append(ParentNode("li", text_to_children(part[3:])))
+                body.children.append(ol)
             case BlockType.PARAGRAPH:
                 text_no_new_lines = block.replace("\n", " ")
                 body.children.append(ParentNode("p", text_to_children(text_no_new_lines)))
